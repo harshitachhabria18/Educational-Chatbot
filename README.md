@@ -27,6 +27,7 @@ Session Management: Flask session for storing chat history
 
 # How to Run
 1. Clone the repo 
+  https://github.com/harshitachhabria18/Educational-Chatbot
 
 2. Install dependencies
   (Ensure you have Python 3 and pip installed)
