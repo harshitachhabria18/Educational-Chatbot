@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Educational Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #f4f4f4;
+        }
+        .chat-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: auto;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 5px;
+        }
+        .user {
+            color: blue;
+            font-weight: bold;
+        }
+        .bot {
+            color: green;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            resize: vertical;
+            margin-top: 5px;
+        }
+        button, .mic-button {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .mic-button {
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+        .mic-button img {
+            width: 30px;
+            vertical-align: middle;
+        }
+
+        .form-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>🎓 Educational Chatbot</h2>
+
+        <!-- Chat History -->
+        <div class="chat-history" id="chat-history">
+            {% for msg in history %}
+                <div class="message">
+                    <span class="user">You:</span> {{ msg.question }}<br>
+                    <span class="bot">Bot:</span> {{ msg.answer }}
+                </div>
+            {% endfor %}
+
+            <!-- {% if response %}
+                <div class="message">
+                    <span class="bot">Bot:</span> {{ response }}
+                </div>
+            {% endif %} -->
+        </div>
+
+        <!-- Chat Form -->
+        <form method="POST" action="/generate" id="chat-form">
+            <label>Enter your educational question:</label><br>
+
+            <textarea id="prompt" name="prompt" rows="3" required placeholder="Type your question here..."></textarea><br>
+
+            <div class="form-controls">
+                <!-- 🎤 Voice Input Button -->
+                <button type="button" class="mic-button" onclick="startListening()">
+                    <img src="https://www.iconpacks.net/icons/1/free-microphone-icon-342-thumb.png" alt="Mic Icon">
+                </button>
+
+                <label>
+                    <input type="checkbox" name="concise" value="yes">
+                    Keep answer short and to the point
+                </label>
+
+                <button type="submit">Ask</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Speech Recognition
+        function startListening() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('prompt').value = transcript;
+                // document.getElementById('chat-form').submit(); // Auto-submit after voice
+            };
+
+            recognition.onerror = function(event) {
+                alert("Speech recognition error: " + event.error);
+            };
+
+            recognition.start();
+        }
+
+        // Submit on Enter key (but allow Shift+Enter for newline)
+        document.addEventListener("DOMContentLoaded", function () {
+            const textarea = document.getElementById("prompt");
+            const form = document.getElementById("chat-form");
+
+            textarea.addEventListener("keydown", function (event) {
+                if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    form.submit();
+                }
+            });
+
+            // Auto-scroll chat to bottom
+            const chat = document.getElementById("chat-history");
+            chat.scrollTop = chat.scrollHeight;
+        });
+    </script>
+</body>
+</html>
