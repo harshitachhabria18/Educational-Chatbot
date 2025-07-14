@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = "your_secret_key_here"  # Replace with a strong secret key in production
 
 # Configure Gemini API Key
-genai.configure(api_key="AIzaSyCUHa0yvykn23kjhO4jeds9FqqGsruaQ4Y")
+genai.configure(api_key="your_api_key")
 
 @app.route("/", methods=["GET"])
 def index():
